@@ -1,0 +1,79 @@
+import java.util.ArrayList;
+import java.util.List;
+
+class Article {
+          
+    final String getArticle;
+
+    Article(final String getArticle) {
+        this.getArticle = getArticle;
+    }
+}
+
+    interface Subscriber {
+        void send(Article article);
+    }
+
+class OfflineSubscriber implements Subscriber/* класс должен реализовывать интерфейс Subscriber */ {
+
+    private final String address;
+
+    public OfflineSubscriber(final String address) {
+        this.address = address;
+    }
+
+    public void send(Article article) {
+        System.out.println(article.getArticle + "была доставлена по адресу: " + address);
+    }// метод send интерфейса Subscriber должен выводить текст "{article.getArticle} была доставлена по адресу: {address}"
+}
+
+class WebSite implements Subscriber/* класс должен реализовывать интерфейс Subscriber */ {
+
+    private final String url;
+
+    public WebSite(final String url) {
+        this.url = url;
+    }
+
+    public void send(Article article) {
+        System.out.println(article.getArticle + "опубликована на страничке: " + url);
+    }// метод send интерфейса Subscriber должен выводить текст "{article.getArticle} опубликована на страничке: {address}" - Почему? 
+}
+
+class NewspaperPublisher {
+
+    private final List<Article> articles;
+
+    // для отправки статей подписчикам, вам необходимо хранить их в списке
+    private final List<Subscriber> subscribers = new ArrayList<>();
+
+    public NewspaperPublisher(final List<Article> articles) {
+        
+        this.articles = articles;
+    }
+
+        public void subscribe(Subscriber subscriber) {
+            if (!subscribers.contains(subscriber)) {
+                subscribers.add(subscriber);
+            }
+        }
+
+        public void unsubscribe(Subscriber subscriber) {
+            subscribers.remove(subscriber);
+        }
+
+        public void startWork() {
+            for (Article article : articles) {
+                for (Subscriber subscriber : subscribers) {
+                    subscriber.send(article);
+                }
+            }
+        }
+
+        public void publishNewArticle(final Article article) {
+            articles.add(article);
+            for (Subscriber subscriber : subscribers) {
+                subscriber.send(article);
+            }
+        }
+}
